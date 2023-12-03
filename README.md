@@ -14,4 +14,4 @@ You are trapped inside a dungeon. Ensure your safety by avoiding or defeating gh
 1. 
 
 ### Contribute
-Modification is possible after fork operation. The main creators of that open source are: [tjfdlvTkr](https://github.com/tjfdlvTkr)
+Modification is possible after fork operation. The main creators of that sources are: [tjfdlvTkr](https://github.com/tjfdlvTkr), [ParkYeongBin](https://github.com/ParkYeongBin), [yeonjeongchoi](https://github.com/yeonjeonchoi), [minjae23](https://github.com/minjae23)
