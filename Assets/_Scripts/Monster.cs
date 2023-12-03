@@ -2,21 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public class Monster : MonoBehaviour
 {
     public GameObject player;
     private Animator animator;
 
-    private float detectionRange = 5f;
-    private float attackRange = 2f;
-
     public float speed;
 
     public float health;
     public float maxHealth;
-    public RuntimeAnimatorController[] animCon;
+    public RuntimeAnimatorController animController;
     public Rigidbody2D target;
+
+    Vector2 direction;
 
     [System.Serializable]
     public class SpawnData
@@ -48,7 +46,8 @@ public class Monster : MonoBehaviour
         }
 
         Vector2 dirVec = target.position - rigid.position;
-        Vector2 nextVec = dirVec.normalized * speed * Time.fixedDeltaTime;
+        direction = dirVec.normalized;  // 움직이는 방향을 계산하여 저장합니다.
+        Vector2 nextVec = direction * speed * Time.fixedDeltaTime;
         rigid.MovePosition(rigid.position + nextVec);
         rigid.velocity = Vector2.zero;
     }
@@ -62,10 +61,9 @@ public class Monster : MonoBehaviour
         spriter.flipX = target.position.x < rigid.position.x;
     }
 
-   
     public void Init(SpawnData data)
     {
-        anim.runtimeAnimatorController = animCon[data.spriteType];
+        anim.runtimeAnimatorController = animController;
         speed = data.speed;
         maxHealth = data.health;
         health = data.health;
@@ -80,21 +78,11 @@ public class Monster : MonoBehaviour
     {
         float distance = Vector3.Distance(transform.position, player.transform.position);
 
-        if (distance <= attackRange)
-        {
-            animator.SetBool("Attack", true);
-            animator.SetBool("Run", false);
-        }
-        else if (distance <= detectionRange)
-        {
-            animator.SetBool("Run", true);
-            animator.SetBool("Attack", false);
-        }
-        else
-        {
-            animator.SetBool("Run", false);
-            animator.SetBool("Attack", false);
-        }
+        // 움직이는 방향에 따라 애니메이션 상태를 변경합니다.
+        animator.SetBool("UP", direction.y > 0);
+        animator.SetBool("Down", direction.y < 0);
+        animator.SetBool("Right", direction.x > 0);
+        animator.SetBool("Left", direction.x < 0);
     }
 
     void OnTriggerEnter2D(Collider2D collision)
@@ -113,6 +101,7 @@ public class Monster : MonoBehaviour
             Dead();
         }
     }
+
     void Dead()
     {
         gameObject.SetActive(false);

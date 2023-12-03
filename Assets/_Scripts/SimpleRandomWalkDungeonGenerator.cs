@@ -7,7 +7,6 @@ using Random = UnityEngine.Random;
 
 public class SimpleRandomWalkDungeonGenerator : AbstractDungeonGenerator
 {
-
     [SerializeField]
     protected SimpleRandomWalkSO randomWalkParameters;
     public GameObject monsterPrefab;
@@ -15,6 +14,7 @@ public class SimpleRandomWalkDungeonGenerator : AbstractDungeonGenerator
 
     // 생성된 몬스터들을 저장할 리스트
     private List<GameObject> spawnedMonsters = new List<GameObject>();
+
     protected HashSet<Vector2Int> RunRandomWalk(SimpleRandomWalkSO parameters, Vector2Int position)
     {
         var currentPosition = position;
@@ -28,60 +28,86 @@ public class SimpleRandomWalkDungeonGenerator : AbstractDungeonGenerator
         }
         return floorPositions;
     }
+
     private void SpawnMonsters(HashSet<Vector2Int> floorPositions)
     {
-    // 이동 가능한 타일들의 목록을 가져옵니다.
-    HashSet<Vector2Int> walkableTiles = tilemapVisualizer.GetWalkableTiles();
+        // 이동 가능한 타일들의 목록을 가져옵니다.
+        HashSet<Vector2Int> walkableTiles = tilemapVisualizer.GetWalkableTiles();
+        // 애니메이터 컨트롤러 로드
+        RuntimeAnimatorController mushroomAnimController = Resources.Load<RuntimeAnimatorController>("mushroom_anim");
 
-    // 이동 가능한 타일들 중에서 랜덤하게 하나를 선택합니다.
-    Vector2Int spawnPosition = walkableTiles.ElementAt(Random.Range(0, walkableTiles.Count));
-    // 선택한 위치에 몬스터 1을 스폰합니다.
-    GameObject monster = Instantiate(monsterPrefab, (Vector3Int)spawnPosition, Quaternion.identity);
-    spawnedMonsters.Add(monster);
-    monster.AddComponent<EnemyMove>();
-    monster.AddComponent<Movement2D>();
-    monster.transform.localScale = new Vector3(5.0f, 5.0f, 1.0f);
-    monster.GetComponent<SpriteRenderer>().sortingOrder = 1;
 
-    CircleCollider2D circleCollider = monster.AddComponent<CircleCollider2D>();
-    circleCollider.radius = 0.085f;
+        // 이동 가능한 타일들 중에서 랜덤하게 하나를 선택합니다.
+        Vector2Int spawnPosition = walkableTiles.ElementAt(Random.Range(0, walkableTiles.Count));
+ 
+        // 선택한 위치에 몬스터 1을 스폰합니다.
+        GameObject monster = Instantiate(monsterPrefab, (Vector3Int)spawnPosition, Quaternion.identity);
+        spawnedMonsters.Add(monster);
+        monster.AddComponent<EnemyMove>();
+        monster.AddComponent<Movement2D>();
+        monster.AddComponent<Monster>();
+        monster.transform.localScale = new Vector3(3.0f, 3.0f, 1.0f);
+        monster.GetComponent<SpriteRenderer>().sortingOrder = 1;
 
-    // 이동 가능한 타일들 중에서 랜덤하게 하나를 선택합니다.
-    Vector2Int spawnPosition2 = walkableTiles.ElementAt(Random.Range(0, walkableTiles.Count));
-    // 선택한 위치에 몬스터 2를 스폰합니다.
-    monster = Instantiate(monsterPrefab2, (Vector3Int)spawnPosition2, Quaternion.identity);
-    spawnedMonsters.Add(monster);
-    monster.AddComponent<EnemyMove>();
-    monster.AddComponent<Movement2D>();
-    monster.transform.localScale = new Vector3(5.0f, 5.0f, 1.0f);
-    monster.GetComponent<SpriteRenderer>().sortingOrder = 1;
+        // 애니메이터 컴포넌트 확인 및 추가
+        Animator animator = monster.GetComponent<Animator>();
+        if(animator == null)
+        {
+            animator = monster.AddComponent<Animator>();
+        }
 
-    circleCollider = monster.AddComponent<CircleCollider2D>();
-    circleCollider.radius = 0.085f;
-    }
+        // 애니메이터 컨트롤러 적용
+        animator.runtimeAnimatorController = mushroomAnimController;
+
+        CircleCollider2D circleCollider = monster.AddComponent<CircleCollider2D>();
+        circleCollider.radius = 0.085f;
+
+        // 이동 가능한 타일들 중에서 랜덤하게 하나를 선택합니다.
+        Vector2Int spawnPosition2 = walkableTiles.ElementAt(Random.Range(0, walkableTiles.Count));
+        // 선택한 위치에 몬스터 2를 스폰합니다.
+        monster = Instantiate(monsterPrefab2, (Vector3Int)spawnPosition2, Quaternion.identity);
+        spawnedMonsters.Add(monster);
+        monster.AddComponent<EnemyMove>();
+        monster.AddComponent<Movement2D>();
+        monster.AddComponent<Monster>();
+        monster.transform.localScale = new Vector3(3.0f, 3.0f, 1.0f);
+        monster.GetComponent<SpriteRenderer>().sortingOrder = 1;
+
+        // 애니메이터 컴포넌트 확인 및 추가
+        animator = monster.GetComponent<Animator>();
+        if(animator == null)
+        {
+            animator = monster.AddComponent<Animator>();
+        }
+
+        // 애니메이터 컨트롤러 적용
+        animator.runtimeAnimatorController = mushroomAnimController;
+
+        circleCollider = monster.AddComponent<CircleCollider2D>();
+        circleCollider.radius = 0.085f;
+        }
+
     public void ClearMonsters()
     {
-    foreach (GameObject monster in spawnedMonsters)
-     {
-        DestroyImmediate(monster);
-     }
-    spawnedMonsters.Clear(); // 리스트를 비움
+        foreach (GameObject monster in spawnedMonsters)
+        {
+            DestroyImmediate(monster);
+        }
+        spawnedMonsters.Clear(); // 리스트를 비움
     }
-
 
     protected override void RunProceduralGeneration()
     {
-    HashSet<Vector2Int> floorPositions = RunRandomWalk(randomWalkParameters, startPosition);
-    tilemapVisualizer.Clear();
-    tilemapVisualizer.PaintFloorTiles(floorPositions);
-    WallGenerator.CreateWalls(floorPositions, tilemapVisualizer);
+        HashSet<Vector2Int> floorPositions = RunRandomWalk(randomWalkParameters, startPosition);
+        tilemapVisualizer.Clear();
+        tilemapVisualizer.PaintFloorTiles(floorPositions);
+        WallGenerator.CreateWalls(floorPositions, tilemapVisualizer);
 
-    if (spawnedMonsters.Count > 0)
-    {
-        ClearMonsters();
+        if (spawnedMonsters.Count > 0)
+        {
+            ClearMonsters();
+        }
+        // 몬스터들을 스폰합니다.
+        SpawnMonsters(floorPositions);
     }
-    // 몬스터들을 스폰합니다.
-    SpawnMonsters(floorPositions);
-    }
-
 }
