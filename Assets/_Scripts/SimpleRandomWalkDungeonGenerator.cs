@@ -41,6 +41,7 @@ public class SimpleRandomWalkDungeonGenerator : AbstractDungeonGenerator
     monster.AddComponent<EnemyMove>();
     monster.AddComponent<Movement2D>();
     monster.transform.localScale = new Vector3(5.0f, 5.0f, 1.0f);
+    monster.GetComponent<SpriteRenderer>().sortingOrder = 1;
 
     // 이동 가능한 타일들 중에서 랜덤하게 하나를 선택합니다.
     Vector2Int spawnPosition2 = walkableTiles.ElementAt(Random.Range(0, walkableTiles.Count));
@@ -50,6 +51,7 @@ public class SimpleRandomWalkDungeonGenerator : AbstractDungeonGenerator
     monster.AddComponent<EnemyMove>();
     monster.AddComponent<Movement2D>();
     monster.transform.localScale = new Vector3(5.0f, 5.0f, 1.0f);
+    monster.GetComponent<SpriteRenderer>().sortingOrder = 1;
     }
     public void ClearMonsters()
     {

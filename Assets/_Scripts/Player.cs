@@ -19,32 +19,36 @@ public class Player : MonoBehaviour
         Vector3 movement = new Vector3(horizontalInput, verticalInput,0f) * moveSpeed * Time.deltaTime; // �̵� ���� ���
         transform.Translate(movement); // �÷��̾� �̵�
 
+        // 상하좌우 방향에 따라 애니메이션 실행
         if (horizontalInput > 0)
         {
-            animator.SetFloat("Direction", 1f); // ������ ���� �ִϸ��̼�
+            animator.SetFloat("DirectionX", 1f); // 오른쪽 방향 애니메이션
         }
         else if (horizontalInput < 0)
         {
-            animator.SetFloat("Direction", -1f); // ���� ���� �ִϸ��̼�
-        }
-        else if (verticalInput > 0)
-        {
-            animator.SetFloat("Direction", 2f); // ���� ���� �ִϸ��̼�
-        }
-        else if (verticalInput < 0)
-        {
-            animator.SetFloat("Direction", -2f); // �Ʒ��� ���� �ִϸ��̼�
+            animator.SetFloat("DirectionX", -1f); // 왼쪽 방향 애니메이션
         }
         else
         {
-            // �÷��̾ ���� ���� ���� �ִϸ��̼��� �����մϴ�.
-            animator.SetFloat("Direction", 0f);
+            animator.SetFloat("DirectionX", 0f);
         }
 
+        if (verticalInput > 0)
+        {
+            animator.SetFloat("DirectionY", 1f); // 위쪽 방향 애니메이션
+        }
+        else if (verticalInput < 0)
+        {
+            animator.SetFloat("DirectionY", -1f); // 아래쪽 방향 애니메이션
+        }
+        else
+        {
+            animator.SetFloat("DirectionY", 0f);
+        }
     }
     public Vector2 GetPosition()
     {
         return transform.position;
     }
-    
+       
 }
