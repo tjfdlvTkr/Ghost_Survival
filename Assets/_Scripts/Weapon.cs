@@ -4,29 +4,30 @@ using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
-    public int id;
-    public float damage =10;
-    public int per = 0;
-    public float speed =150;
-    private float moveSpeed = 10;
-   
+    private float speed = 50f;
+    private Rigidbody2D rigidbody2D;
+
     void Start()
     {
-        Destroy(gameObject,3f);
-       
+        rigidbody2D = GetComponent<Rigidbody2D>();
+        rigidbody2D.velocity = transform.right * speed;
+        Destroy(gameObject, 7f);
     }
-    void Update()
+
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        transform.position += Vector3.up * moveSpeed * Time.deltaTime;
-        switch (id)
+        if (collision.gameObject.CompareTag("Enemy"))
         {
-            case 0:
-                transform.Rotate(Vector3.back * speed * Time.deltaTime);
-                break;
-            default:
-                break;
-                   
+            Enemy enemy = collision.gameObject.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+                enemy.onDamaged();
+            }
+            Destroy(gameObject);
+        }
+        else if (collision.gameObject.CompareTag("wall"))
+        {
+            Destroy(gameObject);
         }
     }
-    
 }

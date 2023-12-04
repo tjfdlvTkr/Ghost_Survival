@@ -6,7 +6,7 @@ public class Movement2D : MonoBehaviour
     [SerializeField]
     private float moveTime = 0.2f; // 한 칸 이동에 소요되는 시간
     private bool isMove = false; // 오브젝트의 이동/대기 제어 변수
-
+    
     public bool MoveTo(Vector3 moveDirection)
     {
         // 이동 중이면 이동 함수가 실행되지 않도록 함

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class EnemyMove : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class EnemyMove : MonoBehaviour
     private TilemapVisualizer tilemapVisualizer;
     private Movement2D movement2D;
     private Vector2Int[] pathToPlayer;
+    private Vector2Int moveDirection;
     private int currentPathIndex;
 
     private void Awake()
@@ -19,6 +21,8 @@ public class EnemyMove : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.instance.isGameover) return;
+
         if (pathToPlayer == null || currentPathIndex >= pathToPlayer.Length)
         {
             // 플레이어의 위치를 가져옴
@@ -34,7 +38,7 @@ public class EnemyMove : MonoBehaviour
         else
         {
         Vector2Int nextPosition = pathToPlayer[currentPathIndex];
-         Vector2Int moveDirection = nextPosition - Vector2Int.FloorToInt(transform.position);
+         moveDirection = nextPosition - Vector2Int.FloorToInt(transform.position);
 
          if (movement2D.MoveTo(new Vector3(moveDirection.x, moveDirection.y, 0)))
           {
@@ -42,5 +46,7 @@ public class EnemyMove : MonoBehaviour
           }
         }       
     }
+
+    public Vector2Int getMovedirection() { return moveDirection; }
 }
 
